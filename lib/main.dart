@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
   set settingGotData(bool gotData1){
     gotData = gotData1;
   }
-  //the following method returns the body of our main page which is the list of todos
+  //the following method actually returns the body of our main page which is the list of todos
   Widget content() {
     return SafeArea(
       child: Container(
