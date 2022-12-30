@@ -36,7 +36,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> listOfValues = [];
+  List<Todo> listOfValues = [];
    bool gotData = false;
 
   
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // a simple setter to initialize listOfValues
-  set settingListOfValues(List<String> val) {
+  set settingListOfValues(List<Todo> val) {
     listOfValues = val;
   }
   // the following setter ensures whether we've todos
@@ -156,9 +156,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ListTile(
-                    title: Text(extractingEvent(listOfValues[index])),
-                    subtitle: Text(extractingDate(listOfValues[index])),
-                    trailing: Text(extractingTime(listOfValues[index])),
+                    title: Text(listOfValues[index].todo),
+                    subtitle: Text('Planned on ${listOfValues[index].date}'),
+                    trailing: Text(listOfValues[index].time),
                   ),
                 ],
               ),
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-  
+  /*
   //following method extracts date of the planned event
    String extractingDate(String date){
     int startingIndex = date.length - 18;
@@ -194,6 +194,6 @@ class _MyHomePageState extends State<MyHomePage> {
     String timeOnly = dateAndtime.substring(12,dateAndtime.length);
     return timeOnly;
   }
-  
+*/  
 
 }

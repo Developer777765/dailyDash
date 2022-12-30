@@ -110,7 +110,9 @@ class AddTaskState extends State<AddTask> {
                       Todo todo = Todo(
                           todo: editingControllerForEvent.text,
                           date: valueOfFormattedDate,
-                          time: valueOfFormattedTime);
+                          time: valueOfFormattedTime,
+                          status: 0
+                          );
 
                       Map<String, Object?> row = todo.toMap();
                       if (editingController.text != 'Thing to be done') {

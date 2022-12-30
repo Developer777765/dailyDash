@@ -19,7 +19,7 @@ class DatabaseModel {
     var theDataBase = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute(
-          'CREATE TABLE ToDos(id INTEGER PRIMARY KEY AUTOINCREMENT, todo TEXT, date TEXT, time TEXT)');
+          'CREATE TABLE ToDos(id INTEGER PRIMARY KEY AUTOINCREMENT, todo TEXT, date TEXT, time TEXT, status BOOLEAN)');
     });
 
     return theDataBase;
@@ -30,14 +30,16 @@ class DatabaseModel {
     return db.insert('ToDos', row);
   }
 
-  Future<List<String>> queryingData() async {
+  Future<List<Todo>> queryingData() async {
     Database db = await openingDB;
-    List<Map<String, Object?>> rows = await db.query('ToDos');
+    List<Map<String, dynamic>> rows = await db.query('ToDos');
     List<Todo> finalRows = List.generate(rows.length, (position) {
       return Todo(
-          todo: rows[position]['todo'].toString(),
-          date: rows[position]['date'].toString(),
-          time: rows[position]['time'].toString());
+          todo: rows[position]['todo'],
+          date: rows[position]['date'],
+          time: rows[position]['time'],
+          status: rows[position]['status']
+          );
     });
     int length = 0;
     List<String> vals = [];
@@ -51,6 +53,6 @@ class DatabaseModel {
       }
       length++;
     }
-    return vals;
+    return finalRows;
   }
 }
