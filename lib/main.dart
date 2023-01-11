@@ -37,7 +37,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Todo> listOfValues = [];
-   bool gotData = false;
+  List<int> indexes = [];
+  bool gotData = false;
+   
 
   
   @override
@@ -152,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView.builder(
           itemBuilder: (context, index) {
             return Card(
+              color: (indexes.contains(index)) ? Colors.blue.withOpacity(0.5) : Colors.transparent,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -159,6 +162,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: Text(listOfValues[index].todo),
                     subtitle: Text('Planned on ${listOfValues[index].date}'),
                     trailing: Text(listOfValues[index].time),
+                    onLongPress: (){
+                      setState(() {
+                        if(!indexes.contains(index)){
+                        indexes.add(index);
+                        }
+                      });
+                    },
+                    onTap: (){
+                      setState(() {
+                        if(indexes.contains(index)){
+                          indexes.remove(index);
+                        }else
+                        {
+                          indexes.add(index);
+                        }
+                      });
+                    },
                   ),
                 ],
               ),
