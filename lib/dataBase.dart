@@ -41,18 +41,12 @@ class DatabaseModel {
           status: rows[position]['status']
           );
     });
-    int length = 0;
-    List<String> vals = [];
-    while (length < finalRows.length) {
-      vals.add(
-          finalRows[length].todo +
-          finalRows[length].date +
-          finalRows[length].time);
-      if (length == finalRows.length - 1) {
-        break;
-      }
-      length++;
-    }
     return finalRows;
+  }
+
+   deletingRecord(int ids)async{
+    Database db = await openingDB;
+    db.rawDelete('delete from ToDos where id=$ids');
+    
   }
 }

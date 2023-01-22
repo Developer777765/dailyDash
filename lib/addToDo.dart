@@ -20,11 +20,8 @@ class AddTaskState extends State<AddTask> {
   var valueOfFormattedDate;
 
   @override
-  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
+    return  Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.purple,
@@ -103,7 +100,7 @@ class AddTaskState extends State<AddTask> {
                 Center(
                   child: ElevatedButton(
                     child: const Text('Add Todo'),
-                    onPressed: () async {
+                    onPressed: () {
                       //accessing database helper
                       DatabaseModel dataBaseModel = DatabaseModel();
 
@@ -119,9 +116,13 @@ class AddTaskState extends State<AddTask> {
                         if (valueOfFormattedDate != null &&
                             valueOfFormattedTime != null) {
                           dataBaseModel.insertingToTable(row);
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (context) => MyApp()));
-                          // Navigator.pop(context);
+                        // Navigator.pushReplacement(context,
+                        // MaterialPageRoute(builder: (context) => MyHomePage(title: 'mainPage')));
+                         Navigator.pop(context);
+                         
+                        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'homePage',)), (route) => false);
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'homePage',))).then((value) => setState(() {},));
+                          
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -137,15 +138,16 @@ class AddTaskState extends State<AddTask> {
                 )
               ],
             ))),
-      ),
-    );
+      );
   }
-
-  Future<bool> _onBackPressed() async {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MyApp()));
-    return true;
+// should use navigator.pop()
+ /* Future<bool> _onBackPressed() async {
+    // Navigator.pushReplacement(
+     //context, MaterialPageRoute(builder: (context) => const MyApp()));
+     Navigator.pop(context);
+    return false;
   }
+  */
 
   String formattingTime(String time) {
     var amORpm = 'AM';
