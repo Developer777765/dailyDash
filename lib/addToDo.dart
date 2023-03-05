@@ -21,133 +21,117 @@ class AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Colors.purple,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            'Add Your Todo',
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.purple,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Add Your Todo',
+          textAlign: TextAlign.center,
         ),
-        body: Container(
-            //color: Colors.black,
-            padding: const EdgeInsets.all(55),
-            width: 475,
-            child: Center(
-                child: Column(
-              children: [
-                const SizedBox(
-                  height: 37,
-                ),
-                TextField(
-                    // ignore: prefer_const_constructors
-                    decoration: InputDecoration(hintText: 'Thing to be done'),
-                    controller: editingControllerForEvent),
-                const SizedBox(
-                  height: 37,
-                ),
-                TextField(
-                  enabled: true,
-                  readOnly: true,
-                  onTap: () async {
-                    editingController.text = 'set time';
-                    TimeOfDay? pickedTime = await showTimePicker(
+        centerTitle: true,
+      ),
+      body: Container(
+          //color: Colors.black,
+          padding: const EdgeInsets.all(55),
+          width: 475,
+          child: Center(
+              child: Column(
+            children: [
+              const SizedBox(
+                height: 37,
+              ),
+              TextField(
+                  // ignore: prefer_const_constructors
+                  decoration: InputDecoration(hintText: 'Thing to be done'),
+                  controller: editingControllerForEvent),
+              const SizedBox(
+                height: 37,
+              ),
+              TextField(
+                enabled: true,
+                readOnly: true,
+                onTap: () async {
+                  editingController.text = 'set time';
+                  TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+
+                  //if the user sets the time then showTimePicker() returns TimeOfDay() instance which consists the user set time
+                  //after that we turn the instance to String so we can set it on the "set time" Text Field otherwise we leave it as it is
+                  //the following condition does the above said
+                  if (pickedTime != null) {
+                    valueOfFormattedTime = formattingTime(pickedTime.toString());
+                    editingController.text = 'Pull of before $valueOfFormattedTime';
+                  }
+                },
+                //following param is justa a hint
+                decoration: const InputDecoration(hintText: 'Set time'),
+                controller: editingController,
+              ),
+              const SizedBox(
+                height: 37,
+              ),
+              TextField(
+                readOnly: true,
+                decoration: const InputDecoration(hintText: 'Pick a date'),
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1947),
+                      lastDate: DateTime(2100));
+                  if (pickedDate != null) {
+                    valueOfFormattedDate =
+                        pickedDate.toString().substring(0, 10);
+                    editingControllerForDate.text =
+                        'Scheduled on ' + valueOfFormattedDate;
+                  }
+                },
+                controller: editingControllerForDate,
+              ),
+              const SizedBox(
+                height: 55,
+              ),
+              Center(
+                child: ElevatedButton(
+                  child: const Text('Add Todo'),
+                  onPressed: () {
+                    //accessing database helper
+                    DatabaseModel dataBaseModel = DatabaseModel();
 
-                    //if the user sets the time then showTimePicker() returns TimeOfDay() instance which consists the user set time
-                    //after that we turn the instance to String so we can set it on the "set time" Text Field otherwise we leave it as it is
-                    //the following condition does the above said
-                    if (pickedTime != null) {
-                      valueOfFormattedTime =
-                          formattingTime(pickedTime.toString());
-                      editingController.text =
-                          'Pull of before ${formattingTime(pickedTime.toString())}';
-                    }
-                  },
-                  //following param is justa a hint
-                  decoration: const InputDecoration(hintText: 'Set time'),
-                  controller: editingController,
-                ),
-                const SizedBox(
-                  height: 37,
-                ),
-                TextField(
-                  readOnly: true,
-                  decoration: const InputDecoration(hintText: 'Pick a date'),
-                  onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1947),
-                        lastDate: DateTime(2100));
-                    if (pickedDate != null) {
-                      valueOfFormattedDate =
-                          pickedDate.toString().substring(0, 10);
-                      editingControllerForDate.text =
-                          'Scheduled on ' + valueOfFormattedDate;
-                    }
-                  },
-                  controller: editingControllerForDate,
-                ),
-                const SizedBox(
-                  height: 55,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    child: const Text('Add Todo'),
-                    onPressed: () {
-                      //accessing database helper
-                      DatabaseModel dataBaseModel = DatabaseModel();
+                    Todo todo = Todo(
+                        todo: editingControllerForEvent.text,
+                        date: valueOfFormattedDate,
+                        time: valueOfFormattedTime,
+                        status: 0,
+                        notified: 0);
 
-                      Todo todo = Todo(
-                          todo: editingControllerForEvent.text,
-                          date: valueOfFormattedDate,
-                          time: valueOfFormattedTime,
-                          status: 0
-                          );
+                    Map<String, Object?> row = todo.toMap();
+                    if (editingController.text != 'Thing to be done') {
+                      if (valueOfFormattedDate != null &&
+                          valueOfFormattedTime != null) {
+                        dataBaseModel.insertingToTable(row);
 
-                      Map<String, Object?> row = todo.toMap();
-                      if (editingController.text != 'Thing to be done') {
-                        if (valueOfFormattedDate != null &&
-                            valueOfFormattedTime != null) {
-                          dataBaseModel.insertingToTable(row);
-                        // Navigator.pushReplacement(context,
-                        // MaterialPageRoute(builder: (context) => MyHomePage(title: 'mainPage')));
-                         Navigator.pop(context);
-                         
-                        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'homePage',)), (route) => false);
-                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'homePage',))).then((value) => setState(() {},));
-                          
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('You must fill every field')));
-                        }
+                        Navigator.pop(context);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('You must fill every field')));
                       }
-                    },
-                  ),
-                )
-              ],
-            ))),
-      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('You must fill every field')));
+                    }
+                  },
+                ),
+              )
+            ],
+          ))),
+    );
   }
-// should use navigator.pop()
- /* Future<bool> _onBackPressed() async {
-    // Navigator.pushReplacement(
-     //context, MaterialPageRoute(builder: (context) => const MyApp()));
-     Navigator.pop(context);
-    return false;
-  }
-  */
 
   String formattingTime(String time) {
     var amORpm = 'AM';
@@ -159,6 +143,7 @@ class AddTaskState extends State<AddTask> {
     if (hour >= 12) {
       hour = hour - 12;
 
+    if(hour == 0){hour = 12;}
       amORpm = 'PM';
 
       //switching between AM & PM
