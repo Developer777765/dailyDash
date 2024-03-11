@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo/dataBase.dart';
 import 'package:todo/main.dart';
@@ -24,7 +25,18 @@ class AddTaskState extends State<AddTask> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            colors: [
+              Colors.green,
+              Colors.black87,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          )),
+        ),
+        backgroundColor: Colors.green,
         automaticallyImplyLeading: false,
         title: const Text(
           'Add Your Todo',
@@ -34,6 +46,10 @@ class AddTaskState extends State<AddTask> {
       ),
       body: Container(
           //color: Colors.black,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/add_todo_background.jpg"),
+                  fit: BoxFit.cover)),
           padding: const EdgeInsets.all(55),
           width: 475,
           child: Center(
@@ -57,14 +73,31 @@ class AddTaskState extends State<AddTask> {
                   TimeOfDay? pickedTime = await showTimePicker(
                     context: context,
                     initialTime: TimeOfDay.now(),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.dark(
+                          onPrimaryContainer: Colors.green,    
+                          primary: Colors.green,
+                          onSurface: Colors.white,
+                          background: Colors.black,
+                         // onBackground: Colors.black
+                        )
+                        
+                        ),
+                        child: child!,
+                      );
+                    }
                   );
 
                   //if the user sets the time then showTimePicker() returns TimeOfDay() instance which consists the user set time
                   //after that we turn the instance to String so we can set it on the "set time" Text Field otherwise we leave it as it is
                   //the following condition does the above said
                   if (pickedTime != null) {
-                    valueOfFormattedTime = formattingTime(pickedTime.toString());
-                    editingController.text = 'Pull of before $valueOfFormattedTime';
+                    valueOfFormattedTime =
+                        formattingTime(pickedTime.toString());
+                    editingController.text =
+                        'Pull of before $valueOfFormattedTime';
                   }
                 },
                 //following param is justa a hint
@@ -79,10 +112,25 @@ class AddTaskState extends State<AddTask> {
                 decoration: const InputDecoration(hintText: 'Pick a date'),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1947),
-                      lastDate: DateTime(2100));
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.dark(
+                          primary: Colors.green,
+                          onSurface: Colors.white,
+                          background: Colors.black,
+                          onBackground: Colors.black
+                        )
+                        
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
                   if (pickedDate != null) {
                     valueOfFormattedDate =
                         pickedDate.toString().substring(0, 10);
@@ -97,6 +145,8 @@ class AddTaskState extends State<AddTask> {
               ),
               Center(
                 child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text('Add Todo'),
                   onPressed: () {
                     //accessing database helper
@@ -143,7 +193,9 @@ class AddTaskState extends State<AddTask> {
     if (hour >= 12) {
       hour = hour - 12;
 
-    if(hour == 0){hour = 12;}
+      if (hour == 0) {
+        hour = 12;
+      }
       amORpm = 'PM';
 
       //switching between AM & PM
